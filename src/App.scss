@@ -1,0 +1,77 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
+.flex{
+    display: flex;
+}
+.t_center{
+    text-align: center;
+}
+.pointer{
+    cursor: pointer;
+}
+.hide{
+    display: none;
+}
+.fl{
+    float: left;
+}
+
+.relative{
+    position: relative;
+}
+
+.w_100{
+    width: 100% !important;
+}
+
+.ml_10 {
+    margin-left: 10px;
+}
+.mr_10 {
+    margin-right: 10px;
+}
+.mb_3{
+    margin-bottom: 3px;
+}
+.mb_10{
+    margin-bottom: 10px;
+}
+.mb_30{
+    margin-bottom: 30px;
+}
+
+
+
+.main_container{
+    padding: 15px;
+}
+.title_card{
+    margin-bottom: 10px;
+    border-bottom: 1px solid #888;
+}
+.title_input:focus{
+    outline: none !important;
+}
+.title_input{
+    border: 0 !important;
+    outline: 0 !important;
+    width: 30% !important;
+}
+
+.error_msg{
+    color: red;
+}
+.delete_color{
+    color: red !important;
+}
+
+.edit_color{
+    color: rgb(31, 161, 236) !important;
+}
+
+.hide{
+    display: none;
+}
