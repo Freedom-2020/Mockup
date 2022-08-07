@@ -84,8 +84,8 @@ export default class RenderField extends Vue {
                 precision={field.precision || 0}
                 placeholder={field.placeHolder}
                 class={"w_100"}
-                //formatter={(value: number) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                //parser={(value: string) => value.replace(/$s?|(,*)/g, "")}
+            //formatter={(value: number) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            //parser={(value: string) => value.replace(/$s?|(,*)/g, "")}
             />
         );
     }
@@ -124,8 +124,8 @@ export default class RenderField extends Vue {
         );
     }
 
-    renderTreeSelect(): JSX.Element  {
-        return <a-tree-select class={"w_100"} show-search/>
+    renderTreeSelect(): JSX.Element {
+        return <a-tree-select class={"w_100"} show-search />
     }
 
     // eslint-disable-next-line
@@ -152,7 +152,7 @@ export default class RenderField extends Vue {
             </a-checkbox-group>
         );
     }
-    
+
 
     // renderFile(field: FieldModel): JSX.Element | undefined {
     //     //@ts-ignore
