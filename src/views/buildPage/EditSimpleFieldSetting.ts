@@ -1,4 +1,5 @@
-import { FieldSettingModel, ItemSource, TreeItemSource, validation } from '@/commons/type/CommType';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { FieldSettingModel, ItemSource, TreeItemSource, Validation } from '@/commons/type/CommType';
 import { Component, Vue, Emit, Prop, Watch } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
 import * as _ from "lodash";
@@ -7,17 +8,17 @@ import { FieldTypeEnum } from '@/commons/enums/FieldTypeEnum';
 
 @Component({
     components: {
-      draggable,
+        draggable,
     },
-  })
+})
 export default class EditSimpleFieldSetting extends Vue {
     @Prop() field!: FieldSettingModel;
     @Prop() variableNameTreeData!: TreeItemSource[];
     @Prop() moduleName!: string;
-    
+
     variableTreeData = _.cloneDeep(this.variableNameTreeData)
     currentVariableTreeNode?: TreeItemSource
-    
+
     fieldModel: FieldSettingModel = {
         fieldType: this.field.fieldType,
         fieldDataType: '',
@@ -48,41 +49,41 @@ export default class EditSimpleFieldSetting extends Vue {
     showVariableModal = false
     currentSelectVariableFieldName = ''
     validationsIndex = 0
-    currentValidation?: validation = undefined
+    currentValidation?: Validation = undefined
 
     showOptionsModal = false
     showError = false
-    created(){
-        this.fieldModel = {...this.fieldModel, ... this.field }
+    created() {
+        this.fieldModel = { ...this.fieldModel, ... this.field }
         this.setCurrentVariableTreeNode(this.variableTreeData)
-        Object.entries(FieldTypeEnum).forEach(([key, value]) => {
-            this.fieldTypeSelectList.push({value: value, label: value, index: new Date().getTime() + Math.random()})
+        Object.entries(FieldTypeEnum).forEach(([value]) => {
+            this.fieldTypeSelectList.push({ value: value, label: value, index: new Date().getTime() + Math.random() })
         })
     }
 
-    saveFieldSetting(){
+    saveFieldSetting() {
         const fieldTree = this.variableTreeData.find(x => x.value === this.moduleName)
-        if(fieldTree?.children?.filter(x => x.value === `${this.moduleName}.${this.fieldModel.fieldName}`).length < 2){
+        if (fieldTree?.children?.filter(x => x.value === `${this.moduleName}.${this.fieldModel.fieldName}`).length < 2) {
             this.toSave(this.fieldModel)
-        }else{
+        } else {
             this.showError = true
         }
     }
 
-    setCurrentVariableTreeNode(treeNodes: TreeItemSource[]){
+    setCurrentVariableTreeNode(treeNodes: TreeItemSource[]) {
         treeNodes.forEach(x => {
-            if(x.value === `${this.moduleName}.${this.field.fieldName}`){
+            if (x.value === `${this.moduleName}.${this.field.fieldName}`) {
                 this.currentVariableTreeNode = x
                 return
             } else {
-                if(x.children && x.children.length > 0){
+                if (x.children && x.children.length > 0) {
                     this.setCurrentVariableTreeNode(x.children)
                 }
             }
         })
     }
 
-    getFieldDataType(fieldType: FieldTypeEnum){
+    getFieldDataType(fieldType: FieldTypeEnum) {
         let type = ''
         switch (fieldType) {
             case FieldTypeEnum.inputText:
@@ -95,24 +96,24 @@ export default class EditSimpleFieldSetting extends Vue {
                 break;
             case FieldTypeEnum.number:
                 type = 'number'
-                break;   
+                break;
             default:
                 type = null
         }
-    
+
         return type
     }
 
-    labelChange(){
-        if(this.fieldModel.label){
+    labelChange() {
+        if (this.fieldModel.label) {
             this.fieldModel.fieldName = this.getVariableName(this.fieldModel.label)
         } else {
             this.fieldModel.fieldName = ''
         }
     }
 
-    getVariableName(eng: string){
-        if(!eng){
+    getVariableName(eng: string) {
+        if (!eng) {
             return ''
         }
 
@@ -120,7 +121,7 @@ export default class EditSimpleFieldSetting extends Vue {
             let str = ''
             for (let index = 0; index < x.length; index++) {
                 const element = x[index]
-                if(index === 0){
+                if (index === 0) {
                     str += wordIdx === 0 ? element.toLowerCase() : element.toUpperCase()
                 } else {
                     str += element
@@ -132,7 +133,7 @@ export default class EditSimpleFieldSetting extends Vue {
         return arr.join('')
     }
 
-    toAddValidation(){
+    toAddValidation() {
         this.validationsIndex++
         this.fieldModel.validations?.push(
             {
@@ -142,91 +143,91 @@ export default class EditSimpleFieldSetting extends Vue {
         )
     }
 
-    toDeleteValidation(index: number){
-        (this.fieldModel.validations as validation[]).splice(index, 1)
+    toDeleteValidation(index: number) {
+        (this.fieldModel.validations as Validation[]).splice(index, 1)
     }
 
-    validationChange(validation: validation){
+    validationChange(validation: Validation) {
         this.checkVariableFlag('validation')
-        if(validation.customizeValidator && validation.customizeValidator.indexOf('{}') > -1){
+        if (validation.customizeValidator && validation.customizeValidator.indexOf('{}') > -1) {
             this.currentValidation = validation
             this.showVariableModal = true;
-        } 
+        }
     }
 
-    displayChange(){
+    displayChange() {
         this.checkVariableFlag('display')
     }
 
-    disabledChange(){
+    disabledChange() {
         this.checkVariableFlag('disabled')
     }
 
-    calculatedValueChange(){
+    calculatedValueChange() {
         this.checkVariableFlag('calculatedValue')
     }
 
-    watchLabelChange(){
+    watchLabelChange() {
         this.checkVariableFlag('label')
     }
 
-    checkVariableFlag(fieldName: string){
-        if(fieldName === 'display' || fieldName === 'disabled' || fieldName === 'calculatedValue'){
+    checkVariableFlag(fieldName: string) {
+        if (fieldName === 'display' || fieldName === 'disabled' || fieldName === 'calculatedValue') {
             this.currentVariableTreeNode.class = 'hide'
-        }else{
+        } else {
             this.currentVariableTreeNode.class = undefined
         }
-        
-        if((this.fieldModel as any)[fieldName] && (this.fieldModel as any)[fieldName].indexOf('{}') > -1){
+
+        if ((this.fieldModel as unknown)[fieldName] && (this.fieldModel as unknown)[fieldName].indexOf('{}') > -1) {
             this.currentSelectVariableFieldName = fieldName
             this.showVariableModal = true;
-        } 
+        }
     }
 
-    selectField(selectedFieldName: string[]){
-        if(this.currentValidation){
+    selectField(selectedFieldName: string[]) {
+        if (this.currentValidation) {
             this.currentValidation.customizeValidator = this.currentValidation.customizeValidator?.replace('{}', `{${selectedFieldName[0]}}`)
             this.currentValidation = undefined
-        }else{
-            (this.fieldModel as any)[this.currentSelectVariableFieldName] = (this.fieldModel as any)[this.currentSelectVariableFieldName]?.replace('{}', `{${selectedFieldName[0]}}`)
+        } else {
+            (this.fieldModel as unknown)[this.currentSelectVariableFieldName] = (this.fieldModel as unknown)[this.currentSelectVariableFieldName]?.replace('{}', `{${selectedFieldName[0]}}`)
         }
 
         this.closeVariableModal()
     }
 
-    toCloseVariableModal(){
-        if(this.currentValidation){
+    toCloseVariableModal() {
+        if (this.currentValidation) {
             this.currentValidation.customizeValidator = this.currentValidation.customizeValidator?.replace('{}', '')
             this.currentValidation = undefined
-        }else{
-            (this.fieldModel as any)[this.currentSelectVariableFieldName] = (this.fieldModel as any)[this.currentSelectVariableFieldName]?.replace('{}', '')
+        } else {
+            (this.fieldModel as unknown)[this.currentSelectVariableFieldName] = (this.fieldModel as unknown)[this.currentSelectVariableFieldName]?.replace('{}', '')
         }
-        
+
         this.closeVariableModal()
     }
 
-    closeVariableModal(){
+    closeVariableModal() {
         this.showVariableModal = false
     }
 
 
-    toShowOptions(){
+    toShowOptions() {
         this.showOptionsModal = true
     }
 
-    toCloseOptionsModal(){
+    toCloseOptionsModal() {
         this.showOptionsModal = false
     }
 
-    labelChangeOption(option: ItemSource){
+    labelChangeOption(option: ItemSource) {
         option.value = this.getVariableName(option.label)
     }
 
-    toDeleteOption(index: number){
+    toDeleteOption(index: number) {
         (this.fieldModel.options as ItemSource[]).splice(index, 1)
     }
 
-    toAddOptions(){
+    toAddOptions() {
         this.fieldModel.options?.push({
             label: '',
             value: '',
@@ -234,39 +235,39 @@ export default class EditSimpleFieldSetting extends Vue {
         })
     }
 
-    calculatedValueBlue(){
-        if(this.fieldModel.calculatedValue){
+    calculatedValueBlue() {
+        if (this.fieldModel.calculatedValue) {
             this.fieldModel.disabled = 'true'
         }
     }
 
-    get showOptions(){
+    get showOptions() {
         const fieldTypes = [FieldTypeEnum.select, FieldTypeEnum.radio]
         return fieldTypes.includes(this.fieldModel.fieldType)
     }
 
-    get showMaxLength(){
+    get showMaxLength() {
         const fieldTypes = [FieldTypeEnum.inputText, FieldTypeEnum.textarea]
         return fieldTypes.includes(this.fieldModel.fieldType)
     }
 
-    get showMinAndMax(){
+    get showMinAndMax() {
         const fieldTypes = [FieldTypeEnum.number, FieldTypeEnum.datePicker, FieldTypeEnum.dateRange]
         return fieldTypes.includes(this.fieldModel.fieldType)
     }
 
-    get showPrecision(){
+    get showPrecision() {
         return this.fieldModel.fieldType === FieldTypeEnum.number
     }
 
-    get showSourceUrl(){
+    get showSourceUrl() {
         return this.fieldModel.fieldType === FieldTypeEnum.treeSelect
     }
 
 
     @Watch('fieldModel.fieldName')
     onFieldNameChanged(fieldName: string) {
-        if(this.currentVariableTreeNode){
+        if (this.currentVariableTreeNode) {
             this.currentVariableTreeNode.label = fieldName
             this.currentVariableTreeNode.value = `${this.currentVariableTreeNode.value.split('.')[0]}.${fieldName}`
         }
@@ -276,6 +277,7 @@ export default class EditSimpleFieldSetting extends Vue {
         this.fieldModel.fieldDataType = this.getFieldDataType(fieldType)
     }
 
-    @Emit('toClose') toClose() {/**/}
-    @Emit('toSave') toSave(field: FieldSettingModel) {/**/}
+    @Emit('toClose') toClose() {/**/ }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Emit('toSave') toSave(field: FieldSettingModel) {/**/ }
 }

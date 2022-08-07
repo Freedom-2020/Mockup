@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Component, Vue } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
-import { fieldTool, FieldSettingModel } from '@/commons/type/CommType';
+import { FieldTool, FieldSettingModel } from '@/commons/type/CommType';
 import { FieldTypeEnum } from '@/commons/enums/FieldTypeEnum';
-const list: fieldTool[] = [
+const list: FieldTool[] = [
   { fieldType: FieldTypeEnum.inputText },
   { fieldType: FieldTypeEnum.number },
   // { fieldType: FieldTypeEnum.select },
@@ -16,10 +17,10 @@ const list: fieldTool[] = [
   },
 })
 export default class FormItem extends Vue {
-  toolList: fieldTool[] = [...list]
+  toolList: FieldTool[] = [...list]
 
-  cloneItem(data: fieldTool) {
-    const random = (Math.random()*100).toFixed()
+  cloneItem(data: FieldTool) {
+    const random = (Math.random() * 100).toFixed()
     const field: FieldSettingModel = {
       uid: new Date().getTime().toString() + Math.random(),
       fieldType: data.fieldType,
@@ -30,7 +31,7 @@ export default class FormItem extends Vue {
       colSpan: 12,
     }
 
-    if(field.fieldType === FieldTypeEnum.number){
+    if (field.fieldType === FieldTypeEnum.number) {
       field.precision = 0
       field.fieldDataType = 'number'
     }

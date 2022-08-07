@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Component, Vue } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
-import { FieldSettingModel, FormPage, TreeItemSource } from '@/commons/type/CommType';
+import { FieldSettingModel, FormPage, isRowModel, TreeItemSource } from '@/commons/type/CommType';
 import { FieldTypeEnum } from '@/commons/enums/FieldTypeEnum';
 import RenderField from './RenderField';
 import EditSimpleFieldSetting from './EditSimpleFieldSetting.vue'
@@ -21,9 +22,9 @@ export default class buildForm extends Vue {
     cards: []
   }
 
-  async created(){
+  async created() {
     //this.toAddCard(-1)
-    const response = await fetch('/api/get',{
+    const response = await fetch('/api/get', {
       method: 'GET', // or 'PUT'
       headers: {
         'Content-Type': 'application/json',
@@ -33,8 +34,8 @@ export default class buildForm extends Vue {
     this.formPage.cards = data
   }
 
-  async toSave(){
-    await fetch('/api/save',{
+  async toSave() {
+    await fetch('/api/save', {
       method: 'Post', // or 'PUT'
       body: JSON.stringify(this.formPage),
       headers: {
@@ -43,8 +44,8 @@ export default class buildForm extends Vue {
     })
   }
 
-  getDefaultField(){
-    const random = (Math.random()*100).toFixed()
+  getDefaultField() {
+    const random = (Math.random() * 100).toFixed()
     const field: FieldSettingModel = {
       uid: new Date().getTime().toString() + Math.random(),
       fieldType: FieldTypeEnum.inputText,
@@ -55,7 +56,7 @@ export default class buildForm extends Vue {
       colSpan: 12,
     }
 
-    if(field.fieldType === FieldTypeEnum.number){
+    if (field.fieldType === FieldTypeEnum.number) {
       field.precision = 0
     }
 
@@ -66,7 +67,7 @@ export default class buildForm extends Vue {
   toAddCard(cardIdx: number) {
     const card = {
       cardId: new Date().getTime().toString() + Math.random(),
-      cardTitle: 'new card', 
+      cardTitle: 'new card',
       rows: [
         {
           rowId: new Date().getTime().toString() + Math.random(),
@@ -82,7 +83,7 @@ export default class buildForm extends Vue {
     this.formPage.cards.splice(cardIdx, 1)
   }
 
-  toAddRow(cardIdx: number, rowIdx: number){
+  toAddRow(cardIdx: number, rowIdx: number) {
     const row = {
       rowId: new Date().getTime().toString() + Math.random(),
       gutter: 16,
@@ -97,18 +98,24 @@ export default class buildForm extends Vue {
   }
 
   toAddField(cardIdx: number, rowIdx: number, fieldIdx: number) {
-    const fields = this.formPage.cards[cardIdx].rows[rowIdx].fields
+    const row = this.formPage.cards[cardIdx].rows[rowIdx]
+    if (!isRowModel(row)) return
+
+    const fields = row.fields
     fields.splice(fieldIdx + 1, 0, this.getDefaultField())
     this.setFieldWidth(fields)
   }
 
   toDeleteField(cardIdx: number, rowIdx: number, fieldIdx: number) {
-    const fields = this.formPage.cards[cardIdx].rows[rowIdx].fields
+    const row = this.formPage.cards[cardIdx].rows[rowIdx]
+    if (!isRowModel(row)) return
+
+    const fields = row.fields
     fields.splice(fieldIdx, 1)
     this.setFieldWidth(fields)
   }
 
-  add(){
+  add() {
     //this.toEditFieldSetting(field)
   }
 
@@ -121,24 +128,24 @@ export default class buildForm extends Vue {
     }
   }
 
-  getLabelClass(field: FieldSettingModel){
+  getLabelClass(field: FieldSettingModel) {
     return field.validations && field.validations.some(x => x.name === 'required') ? 'requiredSign' : ''
   }
 
-  toEditFieldSetting(field: FieldSettingModel){
+  toEditFieldSetting(field: FieldSettingModel) {
     this.currentField = field
     this.showEditSimpleFieldSetting = true
   }
 
-  updateFieldSetting(field: FieldSettingModel){
+  updateFieldSetting(field: FieldSettingModel) {
     Object.keys(field).forEach(key => {
-      (this.currentField as any)[key] = (field as any)[key]
+      (this.currentField as unknown)[key] = (field as unknown)[key]
     })
     this.formPage.cards = [...this.formPage.cards]
     this.closeEditSimpleFieldSetting()
   }
 
-  get variableNameTreeData(){
+  get variableNameTreeData() {
     const variableNames: TreeItemSource[] = [
       {
         value: this.formPage.moduleName,
@@ -150,21 +157,23 @@ export default class buildForm extends Vue {
 
     this.formPage.cards.forEach(card => {
       card.rows.forEach(row => {
-        row.fields.forEach(field => {
-          if(field.fieldName){
-            variableNames[0].children?.push({
-              value: `${this.formPage.moduleName}.${field.fieldName}`,
-              label: field.fieldName || '',
-            })
-          }
-        })
+        if (isRowModel(row)) {
+          row.fields.forEach(field => {
+            if (field.fieldName) {
+              variableNames[0].children?.push({
+                value: `${this.formPage.moduleName}.${field.fieldName}`,
+                label: field.fieldName || '',
+              })
+            }
+          })
+        }
       })
     })
 
     return variableNames;
   }
 
-  closeEditSimpleFieldSetting(){
+  closeEditSimpleFieldSetting() {
     this.showEditSimpleFieldSetting = false
   }
 }

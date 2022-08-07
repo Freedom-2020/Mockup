@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /*
  * Copyright (c) QJJS. All rights reserved.
  * ProjectName: Qjps.Configuration.Web
@@ -6,7 +7,7 @@
  * Date : 2020-06-09 09:42:29
  */
 
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { FieldTypeEnum } from '@/commons/enums/FieldTypeEnum';
 import { FieldSettingModel, ItemSource } from "@/commons/type/CommType";
 import { DATE_FORMAT, INPUT_NUMBER_MAX, INPUT_NUMBER_MIN } from "@/commons/consts/CommConst";
@@ -30,7 +31,7 @@ export default class RenderField extends Vue {
             case FieldTypeEnum.select:
                 return this.renderSelect(this.field);
             case FieldTypeEnum.treeSelect:
-                return this.renderTreeSelect(this.field);
+                return this.renderTreeSelect();
             case FieldTypeEnum.datePicker:
                 return this.renderDate(this.field);
             case FieldTypeEnum.dateRange:
@@ -53,7 +54,7 @@ export default class RenderField extends Vue {
     }
 
     renderStaticText(field: FieldSettingModel): JSX.Element {
-        return <span>static text</span>;
+        return <span>{field.defaultValue}</span>;
     }
 
     renderInputText(field: FieldSettingModel): JSX.Element {
@@ -123,7 +124,7 @@ export default class RenderField extends Vue {
         );
     }
 
-    renderTreeSelect(field: FieldSettingModel): JSX.Element  {
+    renderTreeSelect(): JSX.Element  {
         return <a-tree-select class={"w_100"} show-search/>
     }
 

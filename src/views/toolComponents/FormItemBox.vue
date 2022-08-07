@@ -20,7 +20,7 @@
 </template>
 <script src="./FormItemBox.ts" lang="ts"></script>
 <style lang="scss">
-.tool_div{
+.tool_div {
   border: 1px solid #555;
   min-height: 400px;
   margin-top: 15px;
@@ -34,6 +34,3 @@
   color: rgb(223, 80, 223);
 }
 </style>
-
-
-

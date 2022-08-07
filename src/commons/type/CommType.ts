@@ -1,6 +1,6 @@
 import { FieldTypeEnum } from "../enums/FieldTypeEnum";
 
-export interface FieldSettingModel{
+export interface FieldSettingModel {
     uid?: string;
     fieldType: FieldTypeEnum;
     fieldDataType?: string | number;
@@ -11,7 +11,7 @@ export interface FieldSettingModel{
     calculatedValue?: string;
     display?: string;
     disabled?: string;
-    validations?: validation[];
+    validations?: Validation[];
     placeHolder?: string;
     maxLength?: number;
     textareaRows?: number;
@@ -25,12 +25,12 @@ export interface FieldSettingModel{
     sourceUrl?: string;
 }
 
-export interface fieldTool{
+export interface FieldTool {
     fieldType: FieldTypeEnum;
     fieldName?: string;
 }
 
-export interface validation{
+export interface Validation {
     name: 'required' | 'pattern' | 'validator'
     errorMessage?: string;
     pattern?: string;
@@ -38,16 +38,23 @@ export interface validation{
     customizeValidator?: string;
 }
 
-export interface rowModel{
+export interface RowModel {
     rowId: string;
     gutter: number;
     fields: FieldSettingModel[];
 }
 
+export interface RepeatingSection {
+    sectionId: string;
+    rows: RowModel[];
+}
+
+export type ComponentItem = RowModel | RepeatingSection
+
 export interface CardModel {
     cardId: string;
     cardTitle: string;
-    rows: rowModel[];
+    rows: ComponentItem[];
 }
 
 export interface FormPage {
@@ -56,13 +63,13 @@ export interface FormPage {
     cards: CardModel[];
 }
 
-export interface ItemSource{
+export interface ItemSource {
     value: string | number;
     label: string;
     index?: number;
 }
 
-export interface TreeItemSource{
+export interface TreeItemSource {
     value: string;
     label: string;
     fullPath?: string;
@@ -72,5 +79,8 @@ export interface TreeItemSource{
     class?: string;
 }
 
+export const isRowModel = (item: ComponentItem): item is RowModel => {
+    return (item as RowModel).rowId !== undefined
+}
 
 
